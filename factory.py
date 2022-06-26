@@ -41,7 +41,7 @@ if __name__ == '__main__':
     print(http_f.action())
     
     
-    http_n = get_connection('something_strange')
+    http_n = get_connection('socket_stream')
     print(http_n.action())
     # breakpoint()
     
