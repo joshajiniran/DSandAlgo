@@ -27,11 +27,21 @@ class PaymentProcessor(ABC):
     @abstractmethod
     def pay(self, order: Order):
         """Pay with credit"""
+        
+
+class PaymentProcessorWithSMS(PaymentProcessor):
+    @abstractmethod
+    def auth_sms(self, code):
+        """Authenticate with sms code before pay"""
 
 
 @dataclass
 class CreditPaymentProcessor(PaymentProcessor):
     security_code: int
+    verified: bool = False
+    
+    def auth_sms(self, code):
+        raise Exception('Credit Payment does not required auth sms')
     
     def pay(self, order: Order):
         print("Processing credit payment")
@@ -41,6 +51,11 @@ class CreditPaymentProcessor(PaymentProcessor):
 
 class DebitPaymentProcessor(PaymentProcessor):
     security_code: int
+    verified: bool = False
+    
+    def auth_sms(self, code):
+        print(f"Verifying sms code {code}")
+        self.verified = True
     
     def pay(self, order: Order):
         print("Processing debit payment")
@@ -51,6 +66,11 @@ class DebitPaymentProcessor(PaymentProcessor):
 @dataclass
 class PayPalPaymentProcessor(PaymentProcessor):
     email_address: str
+    verified: bool = False
+    
+    def auth_sms(self, code):
+        print(f"Verifying sms code {code}")
+        self.verified = True
     
     def pay(self, order: Order):
         print("Processing debit payment")
@@ -68,10 +88,11 @@ class PayPalPaymentProcessor(PaymentProcessor):
 
 if __name__ == "__main__":
     order = Order()
-    pay_processor = PayPalPaymentProcessor("Johnson@sloovi.com")
+    pay_processor = CreditPaymentProcessor("Johnson@sloovi.com")
     order.add_item("Sumo", 12, 3.45)
     order.add_item("Bama", 6, 230)
     order.add_item("Tuna", 2, 560)
     print(f"Total price: {order.total_price()}")
+    pay_processor.auth_sms(34590)
     pay_processor.pay(order)
     print(f"Order status: {order.status}")
