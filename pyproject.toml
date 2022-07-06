@@ -6,6 +6,7 @@ authors = ["Josh Ajiniran <josuajiniran@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+starlite = "^1.5.1"
 
 [tool.poetry.dev-dependencies]
 
